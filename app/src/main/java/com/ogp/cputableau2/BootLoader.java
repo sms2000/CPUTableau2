@@ -6,39 +6,31 @@ import android.content.Intent;
 import android.util.Log;
 
 
-public class BootLoader extends BroadcastReceiver
-{
-	private static final String 	TAG 					= "BootLoader";
-
-	
-	public BootLoader()
-	{
-		super();
-	}
+public class BootLoader extends BroadcastReceiver {
+    private static final String TAG = "BootLoader";
 
 
-	@Override
-	public void onReceive (Context 		context,
-						   Intent 		intent)
-	{
-		Log.v(TAG, "onReceive. Entry...");
-		
-		try
-		{
-			String str = intent.getAction();
-			if (str.equals ("android.intent.action.BOOT_COMPLETED"))
-			{
-				StateMachine.init (context);
-				
-				Log.d(TAG, "onReceive. Boot complete. Starting service...");
-				CPUTableauService.loadService (context);
-			}
+    public BootLoader() {
+        super();
+    }
 
-		}
-		catch(Exception e)
-		{
-		}
 
-		Log.v(TAG, "onReceive. Exit.");
-	}
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        Log.v(TAG, "onReceive. Entry...");
+
+        try {
+            String str = intent.getAction();
+            if (str.equals("android.intent.action.BOOT_COMPLETED")) {
+                StateMachine.init(context);
+
+                Log.d(TAG, "onReceive. Boot complete. Starting service...");
+                CPUTableauService.loadService(context);
+            }
+
+        } catch (Exception ignored) {
+        }
+
+        Log.v(TAG, "onReceive. Exit.");
+    }
 }

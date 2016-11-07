@@ -64,8 +64,5 @@ public abstract class HWProvider {
 	public void grabAllFilesFromRoot() {
 		String command = "setenforce 0\n";
 		RootShell.executeOnRoot(command);
-		
-		command = "pm grant com.ogp.cputableau android.permission.SYSTEM_ALERT_WINDOW";
-		RootShell.executeOnRoot(command);
 	}
 }

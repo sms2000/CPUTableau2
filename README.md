@@ -22,6 +22,12 @@ Supports Android Lollipop (5.X), Marshmallow (6.X), Nougat (7.0 up to 7.1.1).
 
 Versions:
 =========
+
+1.0.105
+-------
+1. GUI small fixes.
+
+
 1.0.101
 -------
 1. First workable version.

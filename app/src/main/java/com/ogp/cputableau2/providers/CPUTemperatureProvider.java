@@ -24,10 +24,10 @@ public class CPUTemperatureProvider extends HWProvider {
 			"/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq", };
 
 	private static Integer tempIndex = -1;
-	
+	private static final Object lock = new Object();
 	
 	public CPUTemperatureProvider(Context context) {
-		synchronized (tempIndex) {
+		synchronized(lock) {
 			try {
 				if (-1 == tempIndex) {
 					if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.M) {		// Nougat? Root required!
@@ -49,7 +49,7 @@ public class CPUTemperatureProvider extends HWProvider {
 
 
 	public String getData() {
-		synchronized (tempIndex) {
+		synchronized (lock) {
 			if (0 > tempIndex) {
 				return null;
 			}
@@ -64,7 +64,7 @@ public class CPUTemperatureProvider extends HWProvider {
 				// Normalizing
 				double dres = (double) result;
 
-				while (dres >= 100) {
+				while (dres >= 200) {
 					dres *= 0.1;
 				}
 
