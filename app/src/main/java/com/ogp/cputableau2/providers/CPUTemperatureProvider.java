@@ -37,7 +37,7 @@ public class CPUTemperatureProvider extends HWProvider {
 					for (tempIndex = 0; 0 >= readFileInt(tempFiles[tempIndex]) && tempIndex < tempFiles.length; tempIndex++);
 
 					if (tempIndex >= tempFiles.length) {
-						tempIndex = -2;
+						tempIndex = -1;
 						Log.e(TAG, "CPUTemperatureProvider. Temperature file not found.");
 					}
 				}

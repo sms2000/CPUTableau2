@@ -139,7 +139,7 @@ public class TransparentFrame extends RelativeLayout implements View.OnTouchList
         PointF xyPoint = service.loadDefaultXY();
 
         layoutParams = new WindowManager.LayoutParams(2, 2, (int) (xyPoint.X * displaySize.x) + 1, (int) (xyPoint.Y * displaySize.y) + 1,
-                WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
+                WindowManager.LayoutParams.TYPE_SYSTEM_ERROR,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
                         WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);

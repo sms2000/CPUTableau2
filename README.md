@@ -23,6 +23,12 @@ Supports Android Lollipop (5.X), Marshmallow (6.X), Nougat (7.0 up to 7.1.1).
 Versions:
 =========
 
+1.1.114
+-------
+1. Overlay level raised.
+2. Small bug fixed.
+
+
 1.0.105
 -------
 1. GUI small fixes.
