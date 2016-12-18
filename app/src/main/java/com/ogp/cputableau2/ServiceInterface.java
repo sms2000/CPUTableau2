@@ -3,10 +3,9 @@ package com.ogp.cputableau2;
 import android.view.WindowManager;
 
 
-public interface ServiceInterface 
+interface ServiceInterface
 {
-	public WindowManager			getWindowManager();
-	public PointF 					loadDefaultXY	();
-	public void 					saveDefaultXY	(float x, float y);
-	
+	WindowManager			getWindowManager();
+	PointF 					loadDefaultXY	();
+	void 					saveDefaultXY	(float x, float y);
 }

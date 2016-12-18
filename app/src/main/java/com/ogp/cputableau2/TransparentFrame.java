@@ -14,6 +14,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
+import com.ogp.cputableau2.settings.LocalSettings;
+import com.ogp.cputableau2.su.RootCaller;
+
 
 @SuppressLint("ViewConstructor")
 public class TransparentFrame extends RelativeLayout implements View.OnTouchListener, TransparentContentInterface {
@@ -25,12 +28,11 @@ public class TransparentFrame extends RelativeLayout implements View.OnTouchList
     private boolean motionHappen = false;
     private boolean viewAttached = false;
 
-    private Object lock = new Object();
+    private final Object lock = new Object();
     private ServiceInterface service;
     private Context context;
     private WindowManager windowManager = null;
     private WindowManager.LayoutParams layoutParams = null;
-    private LayoutParams frameParams = null;
     private Point displaySize = new Point();
     private Point displayHalfSize = new Point();
     private int lesserDisplay;
@@ -40,7 +42,6 @@ public class TransparentFrame extends RelativeLayout implements View.OnTouchList
     private long downTime = -1;
     private long lastClickTime = 0;
     private Handler handler = new Handler();
-    private TouchDelegate touchDelegade = null;
     private Point halfSize = new Point();
 
 
@@ -91,9 +92,9 @@ public class TransparentFrame extends RelativeLayout implements View.OnTouchList
     }
 
 
+    @SuppressWarnings("deprecation")
     @SuppressLint("ClickableViewAccessibility")
-    public TransparentFrame(Context context,
-                            ServiceInterface service) {
+    public TransparentFrame(Context context, ServiceInterface service) {
         super(context);
 
         this.context = context;
@@ -116,9 +117,14 @@ public class TransparentFrame extends RelativeLayout implements View.OnTouchList
     }
 
 
-    public void finalize() {
+    public void init(RootCaller.RootExecutor rootExecutor) {
+        transparentClient.init(rootExecutor);
+    }
+
+
+    public void clear() {
         removeView(transparentClient);
-        transparentClient.finalize();
+        transparentClient.clear();
         transparentClient = null;
 
         try {
@@ -156,7 +162,7 @@ public class TransparentFrame extends RelativeLayout implements View.OnTouchList
             viewAttached = true;
         }
 
-        frameParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        LayoutParams frameParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
         addView(transparentClient, frameParams);
 
@@ -166,6 +172,7 @@ public class TransparentFrame extends RelativeLayout implements View.OnTouchList
     }
 
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
@@ -190,7 +197,7 @@ public class TransparentFrame extends RelativeLayout implements View.OnTouchList
     public boolean onTouch(View v, MotionEvent event) {
         WindowManager.LayoutParams layoutParams;
 
-        if (StateMachine.getExtensiveDebug()) {
+        if (LocalSettings.getExtensiveDebug()) {
             Log.v(TAG, String.format("onTouch. A: %d  X/Y:%d/%d", event.getAction(), (int) event.getX(), (int) event.getY()));
         }
 
@@ -218,11 +225,11 @@ public class TransparentFrame extends RelativeLayout implements View.OnTouchList
 
 
                 Rect bounds = new Rect(0, 0, displaySize.x, displaySize.y);
-                touchDelegade = new TouchDelegate(bounds, this);
+                TouchDelegate touchDelegade = new TouchDelegate(bounds, this);
 
                 setTouchDelegate(touchDelegade);
 
-                new Handler().postDelayed(new VerifyLongPress(), StateMachine.getLongPressTimeMs());
+                new Handler().postDelayed(new VerifyLongPress(), LocalSettings.getLongPressTimeMs());
                 break;
 
 
@@ -230,7 +237,7 @@ public class TransparentFrame extends RelativeLayout implements View.OnTouchList
                 int X = locationX;
                 int Y = locationY;
 
-                int tapRadius = lesserDisplay * StateMachine.getTapRadiusPercent() / 100;
+                int tapRadius = lesserDisplay * LocalSettings.getTapRadiusPercent() / 100;
 
                 if (Math.abs(X - downPoint.x) > tapRadius || Math.abs(Y - downPoint.y) > tapRadius) {
                     motionHappen = true;
@@ -260,12 +267,12 @@ public class TransparentFrame extends RelativeLayout implements View.OnTouchList
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (!StateMachine.isActivityRun()) {
+                if (!LocalSettings.isActivityRun()) {
                     long timeNow = System.currentTimeMillis();
                     if (-1 < downTime
                             &&
-                            timeNow - downTime < StateMachine.getClickTimeMs()) {
-                        if (timeNow - lastClickTime < StateMachine.getClickTimeMs()) {
+                            timeNow - downTime < LocalSettings.getClickTimeMs()) {
+                        if (timeNow - lastClickTime < LocalSettings.getClickTimeMs()) {
                             Log.d(TAG, "onTouch. Double click encountered. Do whatever... Here: open activity.");
 
                             lastClickTime = 0;
@@ -277,7 +284,7 @@ public class TransparentFrame extends RelativeLayout implements View.OnTouchList
                             lastClickTime = timeNow;
 
                             new Handler().postDelayed(new VerifySingleClick(),
-                                    StateMachine.getClickTimeMs());
+                                    LocalSettings.getClickTimeMs());
                         }
                     }
 
@@ -287,7 +294,6 @@ public class TransparentFrame extends RelativeLayout implements View.OnTouchList
 
 
                 setTouchDelegate(null);
-                touchDelegade = null;
 
                 motionHappen = false;
 
@@ -364,28 +370,33 @@ public class TransparentFrame extends RelativeLayout implements View.OnTouchList
     public void contentSizeChanged() {
         Log.d(TAG, "contentSizeChanged. TransparentFrame size changed.");
 
-        int xPos = layoutParams.x;
-        int yPos = layoutParams.y;
-
         Point contentSize = transparentClient.getContentSize();
 
         int xHalf = contentSize.x >> 1;
         int yHalf = contentSize.y >> 1;
 
         if (null == oldContentHalfSize) {
-            oldContentHalfSize = new Point(xHalf,
-                    yHalf);
+            oldContentHalfSize = new Point(xHalf, yHalf);
         }
 
-        xPos = layoutParams.x - oldContentHalfSize.x;
-        yPos = layoutParams.y - oldContentHalfSize.y;
+        int xPos = layoutParams.x - oldContentHalfSize.x;
+        int yPos = layoutParams.y - oldContentHalfSize.y;
 
 
         layoutParams.width = contentSize.x;
         layoutParams.height = contentSize.y;
 
-        layoutParams.x = xPos + xHalf;
-        layoutParams.y = yPos + yHalf;
+        int X = xPos + xHalf;
+        int Y = yPos + yHalf;
+
+        if (X < -displayHalfSize.x + halfSize.x) X = -displayHalfSize.x + halfSize.x;
+        else if (X > displayHalfSize.x - halfSize.x) X = displayHalfSize.x - halfSize.x;
+
+        if (Y < -displayHalfSize.y + halfSize.y) Y = -displayHalfSize.y + halfSize.y;
+        else if (Y > displayHalfSize.y - halfSize.y) Y = displayHalfSize.y - halfSize.y;
+
+        layoutParams.x = X;
+        layoutParams.y = Y;
 
         oldContentHalfSize.x = xHalf;
         oldContentHalfSize.y = yHalf;
@@ -403,7 +414,7 @@ public class TransparentFrame extends RelativeLayout implements View.OnTouchList
     public void refresh() {
         try {
             transparentClient.refresh();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -413,7 +424,7 @@ public class TransparentFrame extends RelativeLayout implements View.OnTouchList
             transparentClient.updateFontSize();
 
             contentSizeChanged();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 }

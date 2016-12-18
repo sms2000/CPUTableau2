@@ -21,4 +21,6 @@
     <string name="notify">CPU Tableau 2 active…</string>
     <string name="notify.active">Active…</string>
     <string name="have_to_kill">CPU Tableau 2 cannot start. No \'root\' available or a non-standart kernel used.</string>
+    <string name="no_root">This device requres \'root\' access so the Tableau may work properly. The application is useless before the \'root\' obtained.</string>
+    <string name="no_root_granted">This device requres \'root\' access so the Tableau may work properly. Please allow this application to have \'root\'.</string>
 </resources>

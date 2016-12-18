@@ -3,14 +3,18 @@ package com.ogp.cputableau2.providers;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-
 import android.annotation.SuppressLint;
 
-import com.ogp.cputableau2.RootShell;
-import com.ogp.cputableau2.StateMachine;
+import com.ogp.cputableau2.results.RPCResult;
+import com.ogp.cputableau2.settings.LocalSettings;
+import com.ogp.cputableau2.su.RootCaller;
+
 
 public abstract class HWProvider {
-	protected static int readFileInt(String path) {
+	protected RootCaller.RootExecutor rootExecutor;
+
+
+	static int readFileInt(String path) {
 		File file = new File(path);
 
 		try {
@@ -20,7 +24,7 @@ public abstract class HWProvider {
 
 			return Integer.parseInt(str);
 		} catch (Exception e) {
-			if (StateMachine.getExtensiveDebug()) {
+			if (LocalSettings.getExtensiveDebug()) {
 				e.printStackTrace();
 			}
 		}
@@ -28,7 +32,7 @@ public abstract class HWProvider {
 		return -1;
 	}
 
-	protected static String readFileString(String path) {
+	static String readFileString(String path) {
 		File file = new File(path);
 
 		try {
@@ -38,7 +42,7 @@ public abstract class HWProvider {
 
 			return str;
 		} catch (Exception e) {
-			if (StateMachine.getExtensiveDebug()) {
+			if (LocalSettings.getExtensiveDebug()) {
 				e.printStackTrace();
 			}
 		}
@@ -46,23 +50,44 @@ public abstract class HWProvider {
 		return null;
 	}
 
+
+	protected String readFileStringRoot(String path) {
+		if (null == rootExecutor) {
+			return null;
+		}
+
+
+		String command = String.format("cat %s", path);
+		RPCResult result = rootExecutor.executeOnRoot(command);
+		if (result.isError()) {
+			return null;
+		}
+
+		if (result.isList()) {
+			return (String)result.get(0);
+		} else {
+			return null;
+		}
+	}
+
+
 	@SuppressLint("DefaultLocale")
-	protected static String temperatureDouble2StringString(double dres) {
-		if (StateMachine.isFahrenheit()) {
+	static String temperatureDouble2StringString(double dres) {
+		if (LocalSettings.isFahrenheit()) {
 			return String.format("%.1fºF", dres * 1.8f + 32.0f);
 		} else {
 			return String.format("%.1fºC", dres);
 		}
 	}
 
-	public abstract String getData();
+	public void init(RootCaller.RootExecutor rootExecutor) {
+		this.rootExecutor = rootExecutor;
+	}
 
-	public void finalize() {
+
+	public String getData() {
+		return null;
 	}
-	
-	
-	public void grabAllFilesFromRoot() {
-		String command = "setenforce 0\n";
-		RootShell.executeOnRoot(command);
-	}
+
+	public abstract void clear();
 }

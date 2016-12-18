@@ -23,6 +23,11 @@ Supports Android Lollipop (5.X), Marshmallow (6.X), Nougat (7.0 up to 7.1.1).
 Versions:
 =========
 
+1.2.131
+-------
+1. Lollipop and newer Androids require 'root'. 
+
+
 1.1.114
 -------
 1. Overlay level raised.

@@ -1,5 +1,6 @@
 package com.ogp.cputableau2;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.util.Linkify;
@@ -14,6 +15,8 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+
+import com.ogp.cputableau2.settings.LocalSettings;
 
 
 public class CPUTableauActivity extends Activity {
@@ -40,13 +43,13 @@ public class CPUTableauActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        StateMachine.init(this);
+        LocalSettings.init(this);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         LayoutInflater li = getLayoutInflater();
 
-        ViewGroup viewGroup = (ViewGroup) li.inflate(R.layout.setup,
+        @SuppressLint("InflateParams") ViewGroup viewGroup = (ViewGroup) li.inflate(R.layout.setup,
                 null);
         setContentView(viewGroup);
 
@@ -99,7 +102,7 @@ public class CPUTableauActivity extends Activity {
                                           int progress,
                                           boolean fromUser) {
                 if (fromUser) {
-                    changeTransparency(progress);
+                    changeTransparency();
                 }
             }
 
@@ -118,7 +121,7 @@ public class CPUTableauActivity extends Activity {
                                           int progress,
                                           boolean fromUser) {
                 if (fromUser) {
-                    changeFontSize(progress);
+                    changeFontSize();
                 }
             }
 
@@ -137,7 +140,7 @@ public class CPUTableauActivity extends Activity {
                                           int progress,
                                           boolean fromUser) {
                 if (fromUser) {
-                    changeRefreshMs(progress);
+                    changeRefreshMs();
                 }
             }
 
@@ -156,7 +159,7 @@ public class CPUTableauActivity extends Activity {
                                           int progress,
                                           boolean fromUser) {
                 if (fromUser) {
-                    changeClickTimeMs(progress);
+                    changeClickTimeMs();
                 }
             }
 
@@ -175,7 +178,7 @@ public class CPUTableauActivity extends Activity {
                                           int progress,
                                           boolean fromUser) {
                 if (fromUser) {
-                    changeLongPressMs(progress);
+                    changeLongPressMs();
                 }
             }
 
@@ -195,7 +198,7 @@ public class CPUTableauActivity extends Activity {
                                           int progress,
                                           boolean fromUser) {
                 if (fromUser) {
-                    changeTapRadiusPC(progress);
+                    changeTapRadiusPC();
                 }
             }
 
@@ -217,32 +220,32 @@ public class CPUTableauActivity extends Activity {
     public void onResume() {
         super.onResume();
 
-        StateMachine.setActivityRun(true);
+        LocalSettings.setActivityRun(true);
 
-        cbEnableOverlay.setChecked(StateMachine.getOverlay());
-        cbEnableDebug.setChecked(StateMachine.getExtensiveDebug());
-        cbEnableNotify.setChecked(StateMachine.getUseNotify());
-        cbEnablePWL.setChecked(StateMachine.getPWL());
-        cbEnableBTSL.setChecked(StateMachine.getBTSL());
-        cbUseFaherenheit.setChecked(StateMachine.isFahrenheit());
-        cbShowCurrent.setChecked(StateMachine.getChargeCurrent());
+        cbEnableOverlay.setChecked(LocalSettings.getOverlay());
+        cbEnableDebug.setChecked(LocalSettings.getExtensiveDebug());
+        cbEnableNotify.setChecked(LocalSettings.getUseNotify());
+        cbEnablePWL.setChecked(LocalSettings.getPWL());
+        cbEnableBTSL.setChecked(LocalSettings.getBTSL());
+        cbUseFaherenheit.setChecked(LocalSettings.isFahrenheit());
+        cbShowCurrent.setChecked(LocalSettings.getChargeCurrent());
 
-        sbTransparency.setProgress(StateMachine.getTransparency());
+        sbTransparency.setProgress(LocalSettings.getTransparency());
 
-        sbFontSize.setMax(StateMachine.MAX_FONT_SIZE - StateMachine.MIN_FONT_SIZE);
-        sbFontSize.setProgress(StateMachine.getFontSize() - StateMachine.MIN_FONT_SIZE);
+        sbFontSize.setMax(LocalSettings.MAX_FONT_SIZE - LocalSettings.MIN_FONT_SIZE);
+        sbFontSize.setProgress(LocalSettings.getFontSize() - LocalSettings.MIN_FONT_SIZE);
 
-        sbRefreshMs.setMax(StateMachine.MAX_REFRESH_MS - StateMachine.MIN_REFRESH_MS);
-        sbRefreshMs.setProgress(StateMachine.getRefreshMs() - StateMachine.MIN_REFRESH_MS);
+        sbRefreshMs.setMax(LocalSettings.MAX_REFRESH_MS - LocalSettings.MIN_REFRESH_MS);
+        sbRefreshMs.setProgress(LocalSettings.getRefreshMs() - LocalSettings.MIN_REFRESH_MS);
 
-        sbClickTimeMs.setMax(StateMachine.MAX_CLICK_TIME_MS - StateMachine.MIN_CLICK_TIME_MS);
-        sbClickTimeMs.setProgress(StateMachine.getClickTimeMs() - StateMachine.MIN_CLICK_TIME_MS);
+        sbClickTimeMs.setMax(LocalSettings.MAX_CLICK_TIME_MS - LocalSettings.MIN_CLICK_TIME_MS);
+        sbClickTimeMs.setProgress(LocalSettings.getClickTimeMs() - LocalSettings.MIN_CLICK_TIME_MS);
 
-        sbLongPressTimeMs.setMax(StateMachine.MAX_LONG_PRESS_MS - StateMachine.MIN_LONG_PRESS_MS);
-        sbLongPressTimeMs.setProgress(StateMachine.getLongPressTimeMs() - StateMachine.MIN_LONG_PRESS_MS);
+        sbLongPressTimeMs.setMax(LocalSettings.MAX_LONG_PRESS_MS - LocalSettings.MIN_LONG_PRESS_MS);
+        sbLongPressTimeMs.setProgress(LocalSettings.getLongPressTimeMs() - LocalSettings.MIN_LONG_PRESS_MS);
 
-        sbTapRadiusPC.setMax(StateMachine.MAX_TAP_RADIUS_PC - StateMachine.MIN_TAP_RADIUS_PC);
-        sbTapRadiusPC.setProgress(StateMachine.getTapRadiusPercent() - StateMachine.MIN_TAP_RADIUS_PC);
+        sbTapRadiusPC.setMax(LocalSettings.MAX_TAP_RADIUS_PC - LocalSettings.MIN_TAP_RADIUS_PC);
+        sbTapRadiusPC.setProgress(LocalSettings.getTapRadiusPercent() - LocalSettings.MIN_TAP_RADIUS_PC);
     }
 
 
@@ -250,86 +253,86 @@ public class CPUTableauActivity extends Activity {
     public void onPause() {
         super.onPause();
 
-        StateMachine.setOverlay(cbEnableOverlay.isChecked());
+        LocalSettings.setOverlay(cbEnableOverlay.isChecked());
 
-        StateMachine.setExtensiveDebug(cbEnableDebug.isChecked());
-        StateMachine.setUseNotify(cbEnableNotify.isChecked());
-        StateMachine.setPWL(cbEnablePWL.isChecked());
-        StateMachine.setBTSL(cbEnableBTSL.isChecked());
-        StateMachine.setTransparency(sbTransparency.getProgress());
-        StateMachine.setTransparency(sbTransparency.getProgress());
-        StateMachine.setFontSize(sbFontSize.getProgress() + StateMachine.MIN_FONT_SIZE);
-        StateMachine.setFahrenheit(cbUseFaherenheit.isChecked());
-        StateMachine.setChargeCurrent(cbShowCurrent.isChecked());
-        StateMachine.setClickTimeMs(sbClickTimeMs.getProgress() + StateMachine.MIN_CLICK_TIME_MS);
-        StateMachine.setLongPressTimeMs(sbLongPressTimeMs.getProgress() + StateMachine.MIN_LONG_PRESS_MS);
-        StateMachine.setRefreshMs(sbRefreshMs.getProgress() + StateMachine.MIN_REFRESH_MS);
-        StateMachine.setTapRadiusPercent(sbTapRadiusPC.getProgress() + StateMachine.MIN_TAP_RADIUS_PC);
+        LocalSettings.setExtensiveDebug(cbEnableDebug.isChecked());
+        LocalSettings.setUseNotify(cbEnableNotify.isChecked());
+        LocalSettings.setPWL(cbEnablePWL.isChecked());
+        LocalSettings.setBTSL(cbEnableBTSL.isChecked());
+        LocalSettings.setTransparency(sbTransparency.getProgress());
+        LocalSettings.setTransparency(sbTransparency.getProgress());
+        LocalSettings.setFontSize(sbFontSize.getProgress() + LocalSettings.MIN_FONT_SIZE);
+        LocalSettings.setFahrenheit(cbUseFaherenheit.isChecked());
+        LocalSettings.setChargeCurrent(cbShowCurrent.isChecked());
+        LocalSettings.setClickTimeMs(sbClickTimeMs.getProgress() + LocalSettings.MIN_CLICK_TIME_MS);
+        LocalSettings.setLongPressTimeMs(sbLongPressTimeMs.getProgress() + LocalSettings.MIN_LONG_PRESS_MS);
+        LocalSettings.setRefreshMs(sbRefreshMs.getProgress() + LocalSettings.MIN_REFRESH_MS);
+        LocalSettings.setTapRadiusPercent(sbTapRadiusPC.getProgress() + LocalSettings.MIN_TAP_RADIUS_PC);
 
-        StateMachine.writeToPersistantStorage();
+        LocalSettings.writeToPersistantStorage();
 
-        StateMachine.setActivityRun(false);
+        LocalSettings.setActivityRun(false);
     }
 
 
-    protected void changeTapRadiusPC(int progress) {
-        StateMachine.setTapRadiusPercent(sbTapRadiusPC.getProgress() + StateMachine.MIN_TAP_RADIUS_PC);
+    protected void changeTapRadiusPC() {
+        LocalSettings.setTapRadiusPercent(sbTapRadiusPC.getProgress() + LocalSettings.MIN_TAP_RADIUS_PC);
 
         CPUTableauService.quickUpdate();
     }
 
 
-    protected void changeClickTimeMs(int progress) {
-        StateMachine.setClickTimeMs(sbClickTimeMs.getProgress() + StateMachine.MIN_CLICK_TIME_MS);
+    protected void changeClickTimeMs() {
+        LocalSettings.setClickTimeMs(sbClickTimeMs.getProgress() + LocalSettings.MIN_CLICK_TIME_MS);
 
         CPUTableauService.quickUpdate();
     }
 
 
-    protected void changeLongPressMs(int progress) {
-        StateMachine.setClickTimeMs(sbLongPressTimeMs.getProgress() + StateMachine.MIN_LONG_PRESS_MS);
+    protected void changeLongPressMs() {
+        LocalSettings.setClickTimeMs(sbLongPressTimeMs.getProgress() + LocalSettings.MIN_LONG_PRESS_MS);
 
         CPUTableauService.quickUpdate();
     }
 
 
-    protected void changeRefreshMs(int progress) {
-        StateMachine.setRefreshMs(sbRefreshMs.getProgress() + StateMachine.MIN_REFRESH_MS);
+    protected void changeRefreshMs() {
+        LocalSettings.setRefreshMs(sbRefreshMs.getProgress() + LocalSettings.MIN_REFRESH_MS);
 
         CPUTableauService.quickUpdate();
     }
 
 
     protected void changeFaherenheit() {
-        StateMachine.setFahrenheit(cbUseFaherenheit.isChecked());
+        LocalSettings.setFahrenheit(cbUseFaherenheit.isChecked());
 
         CPUTableauService.quickUpdate();
     }
 
 
     protected void changeShowCurrent() {
-        StateMachine.setChargeCurrent(cbShowCurrent.isChecked());
+        LocalSettings.setChargeCurrent(cbShowCurrent.isChecked());
 
         CPUTableauService.quickUpdate();
     }
 
 
-    protected void changeTransparency(int progress) {
-        StateMachine.setTransparency(sbTransparency.getProgress());
+    protected void changeTransparency() {
+        LocalSettings.setTransparency(sbTransparency.getProgress());
 
         CPUTableauService.quickUpdate();
     }
 
 
-    protected void changeFontSize(int progress) {
-        StateMachine.setFontSize(sbFontSize.getProgress() + StateMachine.MIN_FONT_SIZE);
+    protected void changeFontSize() {
+        LocalSettings.setFontSize(sbFontSize.getProgress() + LocalSettings.MIN_FONT_SIZE);
 
         CPUTableauService.fullUpdate();
     }
 
 
     protected void reloadOverlay() {
-        StateMachine.setOverlay(cbEnableOverlay.isChecked());
+        LocalSettings.setOverlay(cbEnableOverlay.isChecked());
 
         CPUTableauService.setOverlayPane();            // Order of calls is critical!
         CPUTableauService.reloadForeground();

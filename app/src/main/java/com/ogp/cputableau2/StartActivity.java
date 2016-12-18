@@ -11,23 +11,47 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
+import com.ogp.cputableau2.results.RPCResult;
+import com.ogp.cputableau2.settings.LocalSettings;
+import com.ogp.cputableau2.su.RootCaller;
+
+import java.util.Locale;
+
 
 public class StartActivity extends Activity {
-    private static final int SETTINGS_RESULT_EXPECTED = 1001;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+
+        LocalSettings.init(getApplicationContext());
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onResume() {
         super.onResume();
 
-        checkAlertPermission();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (!LocalSettings.isRootObtained()) {
+                RootCaller.RootStatus status = RootCaller.ifRootAvailable();
+                if (status == RootCaller.RootStatus.NO_ROOT) {
+                    Toast.makeText(this, R.string.no_root, Toast.LENGTH_LONG).show();
+                    finish();
+                    return;
+                } else if (status == RootCaller.RootStatus.ROOT_FAILED) {
+                    Toast.makeText(this, R.string.no_root_granted, Toast.LENGTH_LONG).show();
+                    finish();
+                    return;
+                } else {
+                    LocalSettings.rootObtained();
+                }
+            }
+
+            checkAlertPermission();
+        }
+
     }
 
 
@@ -52,8 +76,11 @@ public class StartActivity extends Activity {
             startActivity(startIntent);
             finish();
         } else {
-            String command = String.format("appops set %s SYSTEM_ALERT_WINDOW allow\n", getPackageName());
-            RootShell.executeOnRoot(command);
+            RootCaller.RootExecutor rootProcess = RootCaller.createRootProcess();
+            if (null != rootProcess) {
+                String command = String.format("appops set %s SYSTEM_ALERT_WINDOW allow\n", getPackageName());
+                rootProcess.executeOnRoot(command);
+            }
 
             if (isAlertGranted()) {
                 Intent startIntent = new Intent(this, CPUTableauActivity.class);

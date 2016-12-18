@@ -1,6 +1,8 @@
 package com.ogp.cputableau2;
 
-public interface TransparentContentInterface 
+import com.ogp.cputableau2.su.RootCaller;
+
+interface TransparentContentInterface
 {
-	public void contentSizeChanged 		();
+	void contentSizeChanged 		();
 }

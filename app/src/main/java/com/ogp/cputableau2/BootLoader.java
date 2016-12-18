@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.ogp.cputableau2.settings.LocalSettings;
+
 
 public class BootLoader extends BroadcastReceiver {
     private static final String TAG = "BootLoader";
@@ -22,7 +24,7 @@ public class BootLoader extends BroadcastReceiver {
         try {
             String str = intent.getAction();
             if (str.equals("android.intent.action.BOOT_COMPLETED")) {
-                StateMachine.init(context);
+                LocalSettings.init(context);
 
                 Log.d(TAG, "onReceive. Boot complete. Starting service...");
                 CPUTableauService.loadService(context);

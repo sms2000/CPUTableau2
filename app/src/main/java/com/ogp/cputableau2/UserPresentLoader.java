@@ -5,40 +5,34 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-
-public class UserPresentLoader extends BroadcastReceiver
-{
-	private static final String 	TAG 					= "UserPresentLoader";
-
-	
-	public UserPresentLoader()
-	{
-		super();
-	}
+import com.ogp.cputableau2.settings.LocalSettings;
 
 
-	@Override
-	public void onReceive (Context 		context,
-						   Intent 		intent)
-	{
-		Log.v(TAG, "onReceive. Entry...");
-		
-		try
-		{
-			String str = intent.getAction();
-			if (str.equals ("android.intent.action.USER_PRESENT"))
-			{
-				StateMachine.init (context);
-				
-				Log.d(TAG, "onReceive. User activated. Starting service if destroyed.");
-				CPUTableauService.loadService (context);
-			}
+public class UserPresentLoader extends BroadcastReceiver {
+    private static final String TAG = "UserPresentLoader";
 
-		}
-		catch(Exception e)
-		{
-		}
 
-		Log.v(TAG, "onReceive. Exit.");
-	}
+    public UserPresentLoader() {
+        super();
+    }
+
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        Log.v(TAG, "onReceive. Entry...");
+
+        try {
+            String str = intent.getAction();
+            if (str.equals("android.intent.action.USER_PRESENT")) {
+                LocalSettings.init(context);
+
+                Log.d(TAG, "onReceive. User activated. Starting service if destroyed.");
+                CPUTableauService.loadService(context);
+            }
+
+        } catch (Exception ignored) {
+        }
+
+        Log.v(TAG, "onReceive. Exit.");
+    }
 }
