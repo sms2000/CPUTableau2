@@ -32,7 +32,7 @@ android {
     defaultConfig {
         applicationId "com.ogp.cputableau"
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode code
         versionName "1.3." + code
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

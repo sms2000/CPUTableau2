@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -144,8 +145,13 @@ public class TransparentFrame extends RelativeLayout implements View.OnTouchList
 
         PointF xyPoint = service.loadDefaultXY();
 
+        int type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        }
+
         layoutParams = new WindowManager.LayoutParams(2, 2, (int) (xyPoint.X * displaySize.x) + 1, (int) (xyPoint.Y * displaySize.y) + 1,
-                WindowManager.LayoutParams.TYPE_SYSTEM_ERROR,
+                type,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
                         WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);

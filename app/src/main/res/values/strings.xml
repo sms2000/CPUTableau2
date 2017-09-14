@@ -8,6 +8,7 @@
     <string name="dialog.enabledebug">Extensive debug</string>
     <string name="dialog.accelValue">Acceleration to wake up</string>
     <string name="dialog.OK">"OK"</string>
+    <string name="dialog.cancel">"Cancel"</string>
     <string name="dialog.wakelock">"Permanent PWL"</string>
     <string name="dialog.btscreenlock">"Screen-on when in-call with BT headset/car kit"</string>
     <string name="dialog.tvTransparency">"Background transparency [0–255]"</string>
@@ -23,4 +24,5 @@
     <string name="have_to_kill">CPU Tableau 2 cannot start. No \'root\' available or a non-standart kernel used.</string>
     <string name="no_root">This device requres \'root\' access so the Tableau may work properly. The application is useless before the \'root\' obtained.</string>
     <string name="no_root_granted">This device requres \'root\' access so the Tableau may work properly. Please allow this application to have \'root\'.</string>
+    <string name="root_explanation">\tThis application requires \'root\' to function properly.\n\n\tYour device sems to include the \'root\' package.\n\n\tPress [OK] to request the root privileges (you will have to grant it explicitly on the next popup) or [Cancel] to leave now.\n\n"</string>
 </resources>

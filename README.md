@@ -23,6 +23,11 @@ Supports Android Lollipop (5.X), Marshmallow (6.X), Nougat (7.0 up to 7.1.1), Or
 Versions:
 =========
 
+1.3.148
+-------
+1. Properly dealing with root.
+
+
 1.3.140
 -------
 1. Oreo (Android 8) compatibility. Not thoroughly tested.  

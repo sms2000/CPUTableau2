@@ -138,6 +138,11 @@ public class CPUTableauService extends Service implements ServiceInterface {
         unregisterReceiver(screenInfoReceiverOn);
         unregisterReceiver(screenInfoReceiverOff);
 
+        if (null != rootExecutor) {
+            RootCaller.terminateRootProcess(rootExecutor);
+            rootExecutor = null;
+        }
+
         thisService = null;
 
         super.onDestroy();
