@@ -1,7 +1,5 @@
 package com.ogp.cputableau2.providers;
 
-import android.content.Intent;
-import android.os.Build;
 import android.util.Log;
 
 import com.ogp.cputableau2.su.RootCaller;
@@ -28,41 +26,29 @@ public class CPUTemperatureProvider extends HWProvider {
             "/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq",};
 
     private static Integer tempIndex = -1;
-    private static final Object lock = new Object();
 
     public CPUTemperatureProvider() {
     }
 
 
+    @Override
     public void init(RootCaller.RootExecutor rootExecutor) {
-        if (null != rootExecutor) {
-            this.rootExecutor = rootExecutor;
-        }
+        super.init(rootExecutor);
 
-        synchronized (lock) {
+        synchronized (this) {
             try {
                 if (-1 == tempIndex) {
-                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {        // Nougat? Root required!
-                        for (tempIndex = 0; tempIndex < tempFiles.length; tempIndex++) {
-                            String result = readFileStringRoot(tempFiles[tempIndex]);
-                            if (null == result) {
-                                continue;
-                            }
-
-                            int data = Integer.valueOf(result);
-                            if (0 < data) {
-                                break;
-                            }
+                    for (tempIndex = 0; tempIndex < tempFiles.length; tempIndex++) {
+                        String result = readFileStringRoot(tempFiles[tempIndex]);
+                        if (null == result) {
+                            continue;
                         }
-                    } else {
-                        for (tempIndex = 0; tempIndex < tempFiles.length; tempIndex++) {
-                            int data = readFileInt(tempFiles[tempIndex]);
-                            if (0 < data) {
-                                break;
-                            }
+
+                        int data = Integer.valueOf(result);
+                        if (0 < data) {
+                            break;
                         }
                     }
-
 
                     if (tempIndex >= tempFiles.length) {
                         tempIndex = -1;
@@ -83,22 +69,14 @@ public class CPUTemperatureProvider extends HWProvider {
 
     @Override
     public String getData() {
-        synchronized (lock) {
-            if (0 > tempIndex) {
-                init(null);
-                return null;
-            }
+        if (0 > tempIndex) {
+            init(null);
+            return null;
         }
 
         try {
-            int result;
-
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {        // Nougat? Root required!
-                String resultT = readFileStringRoot(tempFiles[tempIndex]);
-                result = Integer.valueOf(resultT);
-            } else {
-                result = readFileInt(tempFiles[tempIndex]);
-            }
+            String resultT = readFileStringRoot(tempFiles[tempIndex]);
+            int result = Integer.valueOf(resultT);
 
             if (result <= 0) {
                 Log.e(TAG, "Error recognizing CPU temp.");

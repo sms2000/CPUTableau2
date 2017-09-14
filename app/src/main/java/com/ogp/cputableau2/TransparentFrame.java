@@ -154,6 +154,7 @@ public class TransparentFrame extends RelativeLayout implements View.OnTouchList
             windowManager.addView(this, layoutParams);
         } catch (Throwable e) {
             Intent intent = new Intent(context, StartActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
             return;
         }

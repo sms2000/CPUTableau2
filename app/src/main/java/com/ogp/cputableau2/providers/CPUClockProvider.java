@@ -1,6 +1,7 @@
 package com.ogp.cputableau2.providers;
 
 import com.ogp.cputableau2.ShellInterface;
+import com.ogp.cputableau2.su.RootCaller;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -14,14 +15,16 @@ public class CPUClockProvider extends HWProvider {
 
 
     public CPUClockProvider() {
-        try {
-            if (0 > readFileInt(freqFiles)) {
-                new ShellInterface();
-                ShellInterface.isSuAvailable();
-                ShellInterface.runCommand("chmod 404 " + freqFiles);
-            }
+    }
 
-            if (0 < readFileInt(freqFiles)) {
+
+    @Override
+    public void init(RootCaller.RootExecutor rootExecutor) {
+        super.init(rootExecutor);
+
+        try {
+            String output = readFileStringRoot(freqFiles);
+            if (null != output && !output.isEmpty()) {
                 Log.w(TAG, "CPUClockProvider. CPU clock file found.");
             } else {
                 Log.e(TAG, "CPUClockProvider. CPU clock file not found.");
@@ -40,16 +43,16 @@ public class CPUClockProvider extends HWProvider {
     @SuppressLint("DefaultLocale")
     public String getData() {
         try {
-            int result = readFileInt(freqFiles) / KHZ2MHZ;
+            String output = readFileStringRoot(freqFiles);
+            if (null != output && !output.isEmpty()) {
+                int result = Integer.decode(output) / KHZ2MHZ;
 
-            if (result <= 0) {
-                Log.e(TAG, "getData. Error recognizing CPU clock.");
-            } else {
-                Log.v(TAG, String.format("getData. CPU clock recognized: %d MHz",
-                        result));
-
-                return String.format("%d MHz",
-                        result);
+                if (result <= 0) {
+                    Log.e(TAG, "getData. Error recognizing CPU clock.");
+                } else {
+                    Log.v(TAG, String.format("getData. CPU clock recognized: %d MHz", result));
+                    return String.format("%d MHz", result);
+                }
             }
         } catch (Exception e) {
             Log.e(TAG, "getData. EXC(1)");

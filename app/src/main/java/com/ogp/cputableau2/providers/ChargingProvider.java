@@ -1,6 +1,7 @@
 package com.ogp.cputableau2.providers;
 
 import com.ogp.cputableau2.settings.LocalSettings;
+import com.ogp.cputableau2.su.RootCaller;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
@@ -15,23 +16,22 @@ public class ChargingProvider extends HWProvider {
     private static int savedCurrent = -1;
 
     public ChargingProvider() {
+    }
+
+
+    @Override
+    public void init(RootCaller.RootExecutor rootExecutor) {
+        super.init(rootExecutor);
+
         try {
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {        // Nougat? Root required!
-                String resultT = readFileStringRoot(chargeFiles);
-                if (0 < Integer.valueOf(resultT)) {
-                    Log.w(TAG, "ChargingProvider. CPU clock file found. Root required.");
-                } else {
-                    Log.e(TAG, "ChargingProvider. CPU clock file not found.");
-                }
+            String resultT = readFileStringRoot(chargeFiles);
+            if (0 < Integer.valueOf(resultT)) {
+                Log.w(TAG, "ChargingProvider. CPU clock file found. Root required.");
             } else {
-                if (0 < readFileInt(chargeFiles)) {
-                    Log.w(TAG, "ChargingProvider. CPU clock file found.");
-                } else {
-                    Log.e(TAG, "ChargingProvider. CPU clock file not found.");
-                }
+                throw new Exception();
             }
         } catch (Exception e) {
-            Log.e(TAG, "ChargingProvider. EXC(1)");
+            Log.e(TAG, "ChargingProvider. CPU clock file not found.");
         }
     }
 
@@ -45,13 +45,7 @@ public class ChargingProvider extends HWProvider {
 
 
         try {
-            String data;
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {        // Nougat? Root required!
-                data = readFileStringRoot(statusFiles);
-            } else {
-                data = readFileString(statusFiles);
-            }
-
+            String data = readFileStringRoot(statusFiles);
             if (null == data || 'D' == data.getBytes()[0]) {
                 savedCurrent = -1;
                 Log.v(TAG, "getData. No charging now...");
@@ -63,15 +57,9 @@ public class ChargingProvider extends HWProvider {
 
                 return "Full";
             } else {
-                int result;
+                data = readFileStringRoot(chargeFiles);
 
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {        // Nougat? Root required!
-                    data = readFileStringRoot(chargeFiles);
-                    result = Integer.valueOf(data);
-                } else {
-                    result = readFileInt(chargeFiles);
-                }
-
+                int result = Integer.valueOf(data);
                 if (0 < result) {
                     savedCurrent = deductLittleValues(result);
                 }
@@ -97,8 +85,7 @@ public class ChargingProvider extends HWProvider {
 
 
     private int deductLittleValues(int value) {
-        if (value > 3000)        // 3 Amperes???? Maybe it's uA???
-        {
+        if (value >= 5000) {       // 5 Amperes???? Maybe it's uA???
             value /= 1000;
         }
 

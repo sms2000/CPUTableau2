@@ -305,10 +305,8 @@ public class CPUTableauService extends Service implements ServiceInterface {
     }
 
     private void decideOnRoot() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (LocalSettings.isRootObtained()) {
-                rootExecutor = RootCaller.createRootProcess();
-            }
+        if (LocalSettings.isRootObtained() && null == rootExecutor) {
+            rootExecutor = RootCaller.createRootProcess();
         }
     }
 

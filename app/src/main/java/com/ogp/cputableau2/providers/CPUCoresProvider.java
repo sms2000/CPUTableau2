@@ -7,6 +7,8 @@ import java.io.FileReader;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
+import com.ogp.cputableau2.su.RootCaller;
+
 public class CPUCoresProvider extends HWProvider {
     private static final String TAG = "CPUCoresProvider";
 
@@ -22,25 +24,20 @@ public class CPUCoresProvider extends HWProvider {
 
     @SuppressLint("DefaultLocale")
     public CPUCoresProvider() {
+    }
+
+
+    @Override
+    public void init(RootCaller.RootExecutor rootExecutor) {
+        super.init(rootExecutor);
+
         synchronized (this) {
             if (0 > maxCore) {
                 for (int i = 0; i < MAX_CORES; i++) {
                     String cpu = String.format(onlineFilesFormat, i);
-
-                    File file = new File(cpu);
-
-                    try {
-                        BufferedReader br = new BufferedReader(new FileReader(file));
-                        br.readLine();
-                        br.close();
+                    String output = readFileStringRoot(cpu);
+                    if (null != output && !output.isEmpty()) {
                         onlineFiles[i] = String.format(onlineFilesFormat, ++maxCore);
-                    } catch (Exception e) {
-                        if (maxCore < 0) {
-                            Log.e(TAG, "CPUCoresProvider. No cores activity info found.");
-                            maxCore = 0;
-                        }
-
-                        break;
                     }
                 }
             }
@@ -62,25 +59,14 @@ public class CPUCoresProvider extends HWProvider {
 
 
         for (int i = 0; i <= maxCore; i++) {
-            File file = new File(onlineFiles[i]);
-
-            try {
-                BufferedReader br = new BufferedReader(new FileReader(file));
-                String str = br.readLine();
-                br.close();
+            String output = readFileStringRoot(onlineFiles[i]);
+            if (null != output && !output.isEmpty()) {
                 if (0 < i) {
                     coreData += "-";
                 }
 
-                coreData += str;
+                coreData += output;
                 discoveredCores = true;
-            } catch (Exception e) {
-                if (!coresError) {
-                    coresError = true;
-                    Log.e(TAG, "getData. No cores activity info found.");
-                }
-
-                return null;
             }
         }
 

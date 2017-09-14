@@ -23,7 +23,7 @@ public abstract class TransparentBase extends SurfaceView {
     private Thread thread = null;
     private boolean running = false;
     private int forceInflicted = 0;
-    private CountDownLatch lock = null;
+    private CountDownLatch lock = new CountDownLatch(1);
 
 
     public TransparentBase(Context context) {
@@ -80,12 +80,10 @@ public abstract class TransparentBase extends SurfaceView {
                         if (0 < forceInflicted) {
                             forceInflicted--;
                             lock = new CountDownLatch(1);
-                            lock.await(MIN_WAIT,
-                                    TimeUnit.MILLISECONDS);
+                            lock.await(MIN_WAIT, TimeUnit.MILLISECONDS);
 
                         } else {
-                            lock.await(LocalSettings.getRefreshMs(),
-                                    TimeUnit.MILLISECONDS);
+                            lock.await(LocalSettings.getRefreshMs(), TimeUnit.MILLISECONDS);
                         }
                     } catch (Exception e) {
                         Log.e(TAG, "run. EXC(1)");

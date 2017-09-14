@@ -17,11 +17,16 @@ Shows core frequency, cores on/off, CPU and battery temperature and attempts to 
 Root ('su') is required. 
 
 
-Supports Android Lollipop (5.X), Marshmallow (6.X), Nougat (7.0 up to 7.1.1).
+Supports Android Lollipop (5.X), Marshmallow (6.X), Nougat (7.0 up to 7.1.1), Oreo (8.0).
 
 
 Versions:
 =========
+
+1.3.140
+-------
+1. Oreo (Android 8) compatibility. Not thoroughly tested.  
+
 
 1.2.131
 -------

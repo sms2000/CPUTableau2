@@ -11,11 +11,8 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
-import com.ogp.cputableau2.results.RPCResult;
 import com.ogp.cputableau2.settings.LocalSettings;
 import com.ogp.cputableau2.su.RootCaller;
-
-import java.util.Locale;
 
 
 public class StartActivity extends Activity {
@@ -28,30 +25,27 @@ public class StartActivity extends Activity {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onResume() {
         super.onResume();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (!LocalSettings.isRootObtained()) {
-                RootCaller.RootStatus status = RootCaller.ifRootAvailable();
-                if (status == RootCaller.RootStatus.NO_ROOT) {
-                    Toast.makeText(this, R.string.no_root, Toast.LENGTH_LONG).show();
-                    finish();
-                    return;
-                } else if (status == RootCaller.RootStatus.ROOT_FAILED) {
-                    Toast.makeText(this, R.string.no_root_granted, Toast.LENGTH_LONG).show();
-                    finish();
-                    return;
-                } else {
-                    LocalSettings.rootObtained();
-                }
+        if (!LocalSettings.isRootObtained()) {
+            RootCaller.RootStatus status = RootCaller.ifRootAvailable();
+            if (status == RootCaller.RootStatus.NO_ROOT) {
+                Toast.makeText(this, R.string.no_root, Toast.LENGTH_LONG).show();
+                finish();
+                return;
+            } else if (status == RootCaller.RootStatus.ROOT_FAILED) {
+                Toast.makeText(this, R.string.no_root_granted, Toast.LENGTH_LONG).show();
+                finish();
+                return;
+            } else {
+                LocalSettings.rootObtained();
             }
-
-            checkAlertPermission();
         }
 
+        checkAlertPermission();
     }
 
 

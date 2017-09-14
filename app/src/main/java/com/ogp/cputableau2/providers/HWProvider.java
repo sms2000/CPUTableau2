@@ -11,47 +11,9 @@ import com.ogp.cputableau2.su.RootCaller;
 
 
 public abstract class HWProvider {
-	protected RootCaller.RootExecutor rootExecutor;
+	private RootCaller.RootExecutor rootExecutor;
 
-
-	static int readFileInt(String path) {
-		File file = new File(path);
-
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(file));
-			String str = br.readLine();
-			br.close();
-
-			return Integer.parseInt(str);
-		} catch (Exception e) {
-			if (LocalSettings.getExtensiveDebug()) {
-				e.printStackTrace();
-			}
-		}
-
-		return -1;
-	}
-
-	static String readFileString(String path) {
-		File file = new File(path);
-
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(file));
-			String str = br.readLine();
-			br.close();
-
-			return str;
-		} catch (Exception e) {
-			if (LocalSettings.getExtensiveDebug()) {
-				e.printStackTrace();
-			}
-		}
-
-		return null;
-	}
-
-
-	protected String readFileStringRoot(String path) {
+	String readFileStringRoot(String path) {
 		if (null == rootExecutor) {
 			return null;
 		}

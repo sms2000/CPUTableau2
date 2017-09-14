@@ -1,17 +1,42 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
+
+    def versionPropsFile = file('version.properties')
+    def code = 1;
+
+    if (versionPropsFile.canRead()) {
+        def Properties versionProps = new Properties()
+
+        versionProps.load(new FileInputStream(versionPropsFile))
+        List<String> runTasks = gradle.startParameter.getTaskNames();
+        def value = 0
+        for (String item : runTasks) {
+            if (item.contains("compileDebugSources") || item.contains("compileReleaseSources")) {
+                value = 1;
+            }
+
+            print item
+        }
+        code = Integer.parseInt(versionProps['VERSION_CODE']).intValue() + value
+        versionProps['VERSION_CODE'] = code.toString()
+        versionProps.store(versionPropsFile.newWriter(), null)
+    } else {
+        throw new GradleException("Could not read version.properties!")
+    }
 
     defaultConfig {
         applicationId "com.ogp.cputableau"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 25
-        compileOptions {
-            sourceCompatibility JavaVersion.VERSION_1_7
-            targetCompatibility JavaVersion.VERSION_1_7
-        }
+        versionCode code
+        versionName "1.3." + code
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -20,7 +45,22 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+
+    lintOptions {
+        abortOnError false
+    }
+
 }
-dependencies {
-    compile 'com.android.support:appcompat-v7:24.+'
+
+allprojects {
+    repositories {
+        jcenter()
+        maven {
+            url "https://maven.google.com"
+        }
+    }
+
+    dependencies {
+        compile 'com.android.support:appcompat-v7:26.0.1'
+    }
 }
