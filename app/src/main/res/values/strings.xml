@@ -25,4 +25,6 @@
     <string name="no_root">This device requres \'root\' access so the Tableau may work properly. The application is useless before the \'root\' obtained.</string>
     <string name="no_root_granted">This device requres \'root\' access so the Tableau may work properly. Please allow this application to have \'root\'.</string>
     <string name="root_explanation">\tThis application requires \'root\' to function properly.\n\n\tYour device sems to include the \'root\' package.\n\n\tPress [OK] to request the root privileges (you will have to grant it explicitly on the next popup) or [Cancel] to leave now.\n\n"</string>
+    <string name="channel_name">Permanent service</string>
+    <string name="channel_description">CPU Tableau 2 permanent service</string>
 </resources>

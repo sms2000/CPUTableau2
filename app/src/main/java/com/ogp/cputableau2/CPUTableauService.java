@@ -2,6 +2,8 @@ package com.ogp.cputableau2;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -10,11 +12,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.media.AudioAttributes;
+import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -28,6 +33,7 @@ public class CPUTableauService extends Service implements ServiceInterface {
     private static final String TAG = "CPUTableauService";
 
     private static final float PERCENT_LIMIT = 0.49f;
+    private static final String CHANNEL_ID = CPUTableauService.class.getSimpleName() + "_channel";
 
     private static CPUTableauService thisService = null;
 
@@ -44,6 +50,7 @@ public class CPUTableauService extends Service implements ServiceInterface {
     private WakeLock partialWakelock = null;
     private WakeLock screenWakelock = null;
     private RootCaller.RootExecutor rootExecutor;
+    private Uri signalUri;
 
 
     private class MyPhoneStateListener extends PhoneStateListener {
@@ -72,6 +79,8 @@ public class CPUTableauService extends Service implements ServiceInterface {
         thisService = this;
 
         LocalSettings.init(this);
+
+        signalUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.empty);
 
         decideOnRoot();
         setOverlayPane();
@@ -202,10 +211,38 @@ public class CPUTableauService extends Service implements ServiceInterface {
 
             PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
 
-            Notification.Builder noteBuilder = new Notification.Builder(this).setSmallIcon(R.drawable.icon_small).setContentTitle(getString(R.string.notify))
-                    .setContentText(getString(R.string.notify)).setContentIntent(pi);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                        .setAutoCancel(true)
+                        .setSmallIcon(R.drawable.icon_small)
+                        .setContentTitle(getString(R.string.notify))
+                        .setSound(signalUri)
+                        .setContentIntent(pi);
 
-            startForeground(R.string.app_name, noteBuilder.build());
+                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                NotificationChannel channel = new NotificationChannel(CHANNEL_ID, getString(R.string.channel_name), NotificationManager.IMPORTANCE_DEFAULT);
+                AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                        .build();
+
+                channel.setSound(signalUri, audioAttributes);
+                notificationManager.createNotificationChannel(channel);
+
+                builder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
+                Notification notification = builder.build();
+
+                startForeground(R.string.app_name, notification);
+            } else {
+                Notification.Builder noteBuilder = new Notification.Builder(this)
+                        .setContentTitle(getString(R.string.notify))
+                        .setContentText(getString(R.string.notify))
+                        .setSmallIcon(R.drawable.icon_small)
+                        .setContentIntent(pi);
+
+                startForeground(R.string.app_name, noteBuilder.build());
+            }
+
 
             Log.d(TAG, "setItForeground. Bringing the service foreground...");
         }
@@ -337,7 +374,7 @@ public class CPUTableauService extends Service implements ServiceInterface {
     }
 
 
-//
+    //
 // Interface abstracts	
 //
     public WindowManager getWindowManager() {
