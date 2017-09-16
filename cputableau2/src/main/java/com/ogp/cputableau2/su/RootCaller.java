@@ -1,8 +1,10 @@
 package com.ogp.cputableau2.su;
 
-import android.content.Context;
-import android.provider.Settings;
 import android.util.Log;
+
+import com.ogp.cputableau2.global.Constants;
+import com.ogp.cputableau2.results.RPCResult;
+import com.ogp.cputableau2.servlets.ExecuteWithTimeout;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,14 +18,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-import com.ogp.cputableau2.global.Constants;
-import com.ogp.cputableau2.results.RPCResult;
-import com.ogp.cputableau2.servlets.ExecuteWithTimeout;
-
 
 public class RootCaller {
     private static final String CMD_SU = "su";
     private static final String[] SU_PATHES = {"/system/xbin/su", "/system/bin/su", "/sbin/su", "/sbin/magisk/su"};
+    private static final String CMD_SU_EXIT = "su -c ls -l /\n";
 
     private static RootExecutor rootExecutor = null;
     private static int createdCounter = 0;
@@ -228,6 +227,51 @@ public class RootCaller {
 
         Log.v(Constants.TAG, "MainActivity::ifRootAvailable. Exit.");
         return success;
+    }
+
+
+    public static boolean grantMeRoot() {
+        Process chperm = null;
+        BufferedReader reader = null;
+
+        try {
+            chperm = Runtime.getRuntime().exec(CMD_SU_EXIT);
+            reader = new BufferedReader(new InputStreamReader(chperm.getInputStream()));
+            chperm.waitFor();
+
+            int count = 0;
+            while (count < 3) {
+                String string = reader.readLine();
+                if (null == string) {
+                    break;
+                } else {
+                   count++;
+                }
+            }
+
+            if (0 < count) {
+                Log.i(Constants.TAG, "RootCaller::RootExecutor::grantMeRoot. 'Root' granted.");
+                return true;
+            }
+        } catch (Exception ignored) {
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (Exception ignored) {
+            }
+
+            try {
+                if (chperm != null) {
+                    chperm.destroy();
+                }
+            } catch (Exception ignored) {
+            }
+        }
+
+        Log.i(Constants.TAG, "RootCaller::RootExecutor::grantMeRoot. 'Root' denied.");
+        return false;
     }
 
 

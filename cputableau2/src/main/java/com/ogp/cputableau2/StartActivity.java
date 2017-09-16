@@ -13,14 +13,12 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Toast;
 
-import com.ogp.cputableau2.results.RPCResult;
 import com.ogp.cputableau2.settings.LocalSettings;
 import com.ogp.cputableau2.su.RootCaller;
 
 
 public class StartActivity extends Activity {
     private Handler handler = new Handler();
-    private boolean requestInProcess = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +36,7 @@ public class StartActivity extends Activity {
     public void onResume() {
         super.onResume();
 
-        if (requestInProcess) {
-            RootCaller.ifRootAvailable();
-        } else if (!LocalSettings.isRootObtained()) {
+        if (!LocalSettings.isRootObtained()) {
             RootCaller.RootStatus status = RootCaller.ifRootAvailable();
             if (status == RootCaller.RootStatus.NO_ROOT) {
                 Toast.makeText(this, R.string.no_root, Toast.LENGTH_LONG).show();
@@ -68,18 +64,13 @@ public class StartActivity extends Activity {
 
 
     public void onOK(View _) {
-        requestInProcess = true;
-        RootCaller.RootExecutor rootExecutor = RootCaller.createRootProcess();
-        if (null != rootExecutor) {
-            RPCResult result = rootExecutor.executeOnRoot("ls -l /");
-            RootCaller.terminateRootProcess(rootExecutor);
-
-            if (result.isError()) {
-                Toast.makeText(this, R.string.no_root_granted, Toast.LENGTH_LONG).show();
-            } else {
-                LocalSettings.rootObtained();
-                checkAlertPermission();
-            }
+        boolean granted = RootCaller.grantMeRoot();
+        if (granted) {
+            LocalSettings.rootObtained();
+            resumeAll();
+        } else {
+            Toast.makeText(this, R.string.no_root_granted, Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 
@@ -107,9 +98,8 @@ public class StartActivity extends Activity {
     private void checkAlertPermission() {
         if (isAlertGranted()) {
             Intent startIntent = new Intent(this, CPUTableauActivity.class);
-            startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            finishAffinity();
             startActivity(startIntent);
-            finish();
         } else {
             RootCaller.RootExecutor rootProcess = RootCaller.createRootProcess();
             if (null != rootProcess) {
