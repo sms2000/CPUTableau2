@@ -23,6 +23,11 @@ Supports Android Lollipop (5.X), Marshmallow (6.X), Nougat (7.0 up to 7.1.1), Or
 Versions:
 =========
 
+1.3.161
+-------
+1. Fixed a thread lock when attempting to enable OVERLAY permission from the root. 
+
+
 1.3.156
 -------
 1. Android 8 (Oreo) notification fixed with the sound disabled. 

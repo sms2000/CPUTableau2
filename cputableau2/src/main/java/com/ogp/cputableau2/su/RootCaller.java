@@ -36,6 +36,7 @@ public class RootCaller {
         private Process chperm;
         private BufferedReader reader = null;
         private BufferedWriter writer = null;
+        private static final long TIMEOUT_MS = 2000;
 
 
         private static class ExecuteOnRoot extends ExecuteParams {
@@ -166,7 +167,8 @@ public class RootCaller {
                 writer.write(command, 0, command.length());
                 writer.flush();
 
-                while (true) {
+                long timeNow = System.currentTimeMillis();
+                while (System.currentTimeMillis() - timeNow < TIMEOUT_MS) {
                     String string = reader.readLine();
                     if (null == string) {
                         continue;

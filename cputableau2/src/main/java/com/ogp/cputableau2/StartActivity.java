@@ -105,13 +105,7 @@ public class StartActivity extends Activity {
             if (null != rootProcess) {
                 String command = String.format("appops set %s SYSTEM_ALERT_WINDOW allow\n", getPackageName());
                 rootProcess.executeOnRoot(command);
-
                 RootCaller.terminateRootProcess(rootProcess);
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ignored) {
-                }
 
                 if (isAlertGranted()) {
                     Intent startIntent = new Intent(this, CPUTableauActivity.class);
