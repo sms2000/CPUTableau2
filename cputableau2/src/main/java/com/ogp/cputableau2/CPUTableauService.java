@@ -273,15 +273,25 @@ public class CPUTableauService extends Service implements ServiceInterface {
 
 
     static void loadService(Context context) {
-        Log.w(TAG, "Loader is attempting to load the Service.");
+        Intent intent = new Intent(context, CPUTableauService.class);
 
-        try {
-            Intent intent = new Intent(context, CPUTableauService.class);
-            context.startService(intent);
-            Log.w(TAG, "Loader finished loading the Service.");
-        } catch (Exception e) {
-            Log.e(TAG, "Loader failed to load the Service. Exception.");
-            e.printStackTrace();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Log.i(TAG, "CPUTableauService::loadService. Loader is attempting to load the Service in Oreo+ mode.");
+
+            try {
+                context.startForegroundService(intent);
+            } catch (Exception e) {
+                Log.e(TAG, "CPUTableauService::loadService. Loader failed to load the Service. Exception.", e);
+            }
+        } else {
+            Log.i(TAG, "CPUTableauService::loadService. Loader is attempting to load the Service in legacy mode.");
+
+            try {
+                context.startService(intent);
+                Log.w(TAG, "CPUTableauService::loadService. Loader finished loading the Service.");
+            } catch (Exception e) {
+                Log.e(TAG, "CPUTableauService::loadService. Loader failed to load the Service. Exception.", e);
+            }
         }
     }
 

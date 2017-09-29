@@ -23,6 +23,12 @@ Supports Android Lollipop (5.X), Marshmallow (6.X), Nougat (7.0 up to 7.1.1), Or
 Versions:
 =========
 
+1.3.180
+-------
+1. Manifest issues fixed.
+2. Boot time start fixed.
+
+
 1.3.161
 -------
 1. Fixed a thread lock when attempting to enable OVERLAY permission from the root. 

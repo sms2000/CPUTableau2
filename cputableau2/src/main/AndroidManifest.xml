@@ -38,19 +38,17 @@
 
         <receiver
             android:name="com.ogp.cputableau2.BootLoader"
-            android:process="com.ogp.cputableau.CPUTableauService">
+            android:enabled="true"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
         <receiver
             android:name="com.ogp.cputableau2.UserPresentLoader"
-            android:process="com.ogp.cputableau.CPUTableauService">
+            android:process="com.ogp.cputableau2.CPUTableauService">
             <intent-filter>
                 <action android:name="android.intent.action.USER_PRESENT" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
