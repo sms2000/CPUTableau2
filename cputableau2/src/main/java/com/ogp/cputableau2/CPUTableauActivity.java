@@ -2,6 +2,7 @@ package com.ogp.cputableau2;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
@@ -49,11 +50,11 @@ public class CPUTableauActivity extends Activity {
 
         LayoutInflater li = getLayoutInflater();
 
-        @SuppressLint("InflateParams") ViewGroup viewGroup = (ViewGroup) li.inflate(R.layout.setup,
-                null);
+        @SuppressLint("InflateParams")
+        ViewGroup viewGroup = (ViewGroup) li.inflate(R.layout.setup, null);
         setContentView(viewGroup);
 
-        Button btOK = (Button) viewGroup.findViewById(R.id.btOK);
+        Button btOK = viewGroup.findViewById(R.id.btOK);
         btOK.setOnClickListener(new View.OnClickListener() {
             public void onClick(View paramView) {
                 saveAndFinish();
@@ -61,12 +62,12 @@ public class CPUTableauActivity extends Activity {
         });
 
 
-        TextView headline = (TextView) findViewById(R.id.TextView01);
+        TextView headline = findViewById(R.id.TextView01);
         Linkify.addLinks(headline,
                 Linkify.ALL);
 
 
-        cbEnableOverlay = (CheckBox) viewGroup.findViewById(R.id.cbEnable);
+        cbEnableOverlay = viewGroup.findViewById(R.id.cbEnable);
         cbEnableOverlay.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
@@ -74,12 +75,19 @@ public class CPUTableauActivity extends Activity {
             }
         });
 
-        cbEnableDebug = (CheckBox) viewGroup.findViewById(R.id.cbDebug);
-        cbEnableNotify = (CheckBox) viewGroup.findViewById(R.id.cbNotify);
-        cbEnablePWL = (CheckBox) viewGroup.findViewById(R.id.cbWakelock);
-        cbEnableBTSL = (CheckBox) viewGroup.findViewById(R.id.cbBTScreenLock);
+        cbEnableDebug = viewGroup.findViewById(R.id.cbDebug);
 
-        cbUseFaherenheit = (CheckBox) viewGroup.findViewById(R.id.cbFaherenheit);
+        cbEnableNotify = viewGroup.findViewById(R.id.cbNotify);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            cbEnableNotify.setEnabled(false);
+            cbEnableNotify.setChecked(true);
+        }
+
+        cbEnablePWL = viewGroup.findViewById(R.id.cbWakelock);
+        cbEnableBTSL = viewGroup.findViewById(R.id.cbBTScreenLock);
+
+        cbUseFaherenheit = viewGroup.findViewById(R.id.cbFaherenheit);
         cbUseFaherenheit.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
@@ -87,7 +95,7 @@ public class CPUTableauActivity extends Activity {
             }
         });
 
-        cbShowCurrent = (CheckBox) viewGroup.findViewById(R.id.cbShowCurrent);
+        cbShowCurrent = viewGroup.findViewById(R.id.cbShowCurrent);
         cbShowCurrent.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
@@ -96,7 +104,7 @@ public class CPUTableauActivity extends Activity {
         });
 
 
-        sbTransparency = (SeekBar) viewGroup.findViewById(R.id.sbTransparecy);
+        sbTransparency = viewGroup.findViewById(R.id.sbTransparecy);
         sbTransparency.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar,
                                           int progress,
@@ -115,7 +123,7 @@ public class CPUTableauActivity extends Activity {
             }
         });
 
-        sbFontSize = (SeekBar) viewGroup.findViewById(R.id.sbFontSize);
+        sbFontSize = viewGroup.findViewById(R.id.sbFontSize);
         sbFontSize.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar,
                                           int progress,
@@ -134,7 +142,7 @@ public class CPUTableauActivity extends Activity {
             }
         });
 
-        sbRefreshMs = (SeekBar) viewGroup.findViewById(R.id.sbrefreshMs);
+        sbRefreshMs = viewGroup.findViewById(R.id.sbrefreshMs);
         sbRefreshMs.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar,
                                           int progress,
@@ -153,7 +161,7 @@ public class CPUTableauActivity extends Activity {
             }
         });
 
-        sbClickTimeMs = (SeekBar) viewGroup.findViewById(R.id.sbclickTimeMs);
+        sbClickTimeMs = viewGroup.findViewById(R.id.sbclickTimeMs);
         sbClickTimeMs.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar,
                                           int progress,
@@ -172,7 +180,7 @@ public class CPUTableauActivity extends Activity {
             }
         });
 
-        sbLongPressTimeMs = (SeekBar) viewGroup.findViewById(R.id.sblongPressMs);
+        sbLongPressTimeMs = viewGroup.findViewById(R.id.sblongPressMs);
         sbLongPressTimeMs.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar,
                                           int progress,
@@ -192,7 +200,7 @@ public class CPUTableauActivity extends Activity {
         });
 
 
-        sbTapRadiusPC = (SeekBar) viewGroup.findViewById(R.id.sbtapRadiusPercent);
+        sbTapRadiusPC = viewGroup.findViewById(R.id.sbtapRadiusPercent);
         sbTapRadiusPC.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar,
                                           int progress,

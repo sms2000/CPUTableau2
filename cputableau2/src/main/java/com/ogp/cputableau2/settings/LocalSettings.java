@@ -3,6 +3,7 @@ package com.ogp.cputableau2.settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.Build;
 
 
 public class LocalSettings {
@@ -11,7 +12,7 @@ public class LocalSettings {
     public static final int MAX_FONT_SIZE = 50;
 
     public static final int MIN_REFRESH_MS = 100;
-    private static final int DEF_REFRESH_MS = 250;
+    private static final int DEF_REFRESH_MS = 1500;
     public static final int MAX_REFRESH_MS = 5000;
 
     public static final int MIN_CLICK_TIME_MS = 50;
@@ -82,7 +83,7 @@ public class LocalSettings {
 // Defaults
         useOverlay = true;
         extensiveDebug = false;
-        useNotify = false;
+        useNotify = true;
         usePWL = false;
         useBTSL = false;
         useFaherenheit = false;
@@ -155,6 +156,11 @@ public class LocalSettings {
     }
 
     public static void setUseNotify(boolean value) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            useNotify = true;
+            return;
+        }
+
         useNotify = value;
     }
 
