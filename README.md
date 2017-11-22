@@ -23,6 +23,10 @@ Supports Android Lollipop (5.X), Marshmallow (6.X), Nougat (7.0 up to 7.1.1), Or
 Versions:
 =========
 
+1.4.201
+-------
+1. Packaging fixed.
+
 1.3.189
 -------
 1. Android 8+ requires always foreground service to function properly. Option to set back/foreground is grayed. 
