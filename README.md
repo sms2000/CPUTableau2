@@ -23,7 +23,7 @@ Supports Android Lollipop (5.X), Marshmallow (6.X), Nougat (7.0 up to 7.1.1), Or
 Versions:
 =========
 
-1.4.201
+1.4.201-202
 -------
 1. Packaging fixed.
 
