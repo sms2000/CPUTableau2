@@ -72,10 +72,10 @@ public class ChargingProvider extends HWProvider {
                 Log.v(TAG, "getData. Charging current could not be retrieved yet.");
             }
         } catch (Exception e) {
-            Log.e(TAG, "getData. EXC(1)");
+            Log.e(TAG, "getData. EXC(1)", e);
         }
 
-        return null;
+        return "?";
     }
 
 

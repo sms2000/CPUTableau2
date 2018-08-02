@@ -58,7 +58,9 @@ public class RootCaller {
         RootExecutor() {
             super();
 
-            initialize();
+            if (!initialize()) {
+                Log.w(Constants.TAG, "RootCaller::RootExecutor::<init>. Root process failed to initialize.");
+            }
 
             Log.v(Constants.TAG, "RootCaller::RootExecutor::<init>. Entry/Exit.");
         }
@@ -114,7 +116,7 @@ public class RootCaller {
 
 
         @Override
-        public RPCResult executeWithResult(final ExecuteParams params) throws InvocationTargetException {
+        public RPCResult executeWithResult(final ExecuteParams params) {
             Log.v(Constants.TAG, "RootCaller::RootExecutor::executeWithResult. Entry...");
 
             RPCResult result;
@@ -156,13 +158,28 @@ public class RootCaller {
                 }
 
                 if (initNow) {
-                    initialize();
+                    if (!initialize()) {
+                        Log.w(Constants.TAG, "RootCaller::RootExecutor::sinkRootCommand. Root process failed to initialize.");
+                    }
                 }
 
                 if (!procAlive()) {
                     terminateRootProcess(rootExecutor);
                     throw new Exception("Dead");
                 }
+
+
+                // Clear leftovers if any.
+                if (reader.ready()) {
+                    long timeNow = System.currentTimeMillis();
+                    while (System.currentTimeMillis() - timeNow < TIMEOUT_MS) {
+                        String string = reader.readLine();
+                        if (null == string) {
+                            break;
+                        }
+                    }
+                }
+
 
                 writer.write(command, 0, command.length());
                 writer.flush();
@@ -180,6 +197,12 @@ public class RootCaller {
                 }
 
                 Log.d(Constants.TAG, String.format("RootCaller::RootExecutor::sinkRootCommand. Output includes %d line(s).", received.size()));
+                if (0 < received.size()) {
+                    for (String str : received) {
+                        Log.v(Constants.TAG, ">>> " + str);
+                    }
+                }
+
                 result = new RPCResult(received);
             } catch (Exception e) {
                 Log.e(Constants.TAG, "RootCaller::RootExecutor::sinkRootCommand. Exception with: " + e.getMessage());
