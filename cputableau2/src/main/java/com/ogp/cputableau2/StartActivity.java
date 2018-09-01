@@ -58,12 +58,12 @@ public class StartActivity extends Activity {
     }
 
 
-    public void onCancel(View _) {
+    public void onCancel(View ignored) {
         finish();
     }
 
 
-    public void onOK(View _) {
+    public void onOK(View ignored) {
         boolean granted = RootCaller.grantMeRoot();
         if (granted) {
             LocalSettings.rootObtained();

@@ -1,11 +1,10 @@
 package com.ogp.cputableau2.providers;
 
+import android.annotation.SuppressLint;
+import android.util.Log;
+
 import com.ogp.cputableau2.settings.LocalSettings;
 import com.ogp.cputableau2.su.RootCaller;
-
-import android.annotation.SuppressLint;
-import android.os.Build;
-import android.util.Log;
 
 public class ChargingProvider extends HWProvider {
     private static final String TAG = "ChargingProvider";
@@ -59,7 +58,7 @@ public class ChargingProvider extends HWProvider {
             } else {
                 data = readFileStringRoot(chargeFiles);
 
-                int result = Integer.valueOf(data);
+                int result = Math.abs(Integer.valueOf(data));
                 if (0 < result) {
                     savedCurrent = deductLittleValues(result);
                 }

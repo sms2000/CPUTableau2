@@ -11,7 +11,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +63,7 @@ public class RootCaller {
         }
 
 
-        private synchronized boolean initialize() {
+        private synchronized void initialize() {
             Log.v(Constants.TAG, "RootCaller::RootExecutor::initialize. Entry...");
 
             try {
@@ -81,7 +80,7 @@ public class RootCaller {
             }
 
             Log.v(Constants.TAG, "RootCaller::RootExecutor::initialize. Exit.");
-            return procAlive();
+            procAlive();
         }
 
 
@@ -114,7 +113,7 @@ public class RootCaller {
 
 
         @Override
-        public RPCResult executeWithResult(final ExecuteParams params) throws InvocationTargetException {
+        public RPCResult executeWithResult(final ExecuteParams params) {
             Log.v(Constants.TAG, "RootCaller::RootExecutor::executeWithResult. Entry...");
 
             RPCResult result;
@@ -163,6 +162,11 @@ public class RootCaller {
                     terminateRootProcess(rootExecutor);
                     throw new Exception("Dead");
                 }
+
+                while (reader.ready()) {
+                    reader.readLine();
+                }
+
 
                 writer.write(command, 0, command.length());
                 writer.flush();
